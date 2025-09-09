@@ -1,0 +1,12 @@
+# Dependencias de Node.js
+node_modules/
+
+# Archivos de logs y reportes de WebdriverIO
+logs/
+wdio-ma-screenshots/
+wdio-ma-logs/
+.tmp/
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
