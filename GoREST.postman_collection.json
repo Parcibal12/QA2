@@ -1,0 +1,1913 @@
+{
+	"info": {
+		"_postman_id": "a94237de-1fac-467f-ab08-544ab03a5288",
+		"name": "GoREST",
+		"description": "# Orden de ejecución\n\n<img src=\"https://content.pstmn.io/4dbf18fd-fd6d-4f37-9cdb-ff13daa9c11f/aW1hZ2UucG5n\" width=\"633\" height=\"785\">\n\n<img src=\"https://content.pstmn.io/5d53a07e-6449-4bc1-b9a1-a8a5c15fce75/aW1hZ2UucG5n\" width=\"633\" height=\"243\">\n\n> Revisar correctamente el orden de ejecucion ya que cambiar alguna de ellas puede ocasionar en falsos negativos y llevar a tomar decisiones incorrectas. \n  \n> Integrar las variables de entorno del correspondiente archivo JSON \n  \n> Entorno de ejecucion: Test \n  \n> Estudiante: Rafael Vargas",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38317537"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Create user",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const genderList = [\"male\", \"female\"]",
+									"const statusList = [\"active\", \"inactive\"]",
+									"",
+									"const randomIndexGender = Math.floor(Math.random() * genderList.length)",
+									"const randomIndexStatus = Math.floor(Math.random() * statusList.length)",
+									"",
+									"const name = pm.variables.replaceIn(\"{{$randomFullName}}\")",
+									"const email = pm.variables.replaceIn(\"{{$randomEmail}}\")",
+									"",
+									"pm.environment.set(\"gender\", genderList[randomIndexGender])",
+									"pm.environment.set(\"status\", statusList[randomIndexStatus])",
+									"pm.environment.set(\"name\", name)",
+									"pm.environment.set(\"email\", email)",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseJson = pm.response.json();",
+									"",
+									"pm.environment.set(\"id\", responseJson.id);",
+									"",
+									"pm.test(\"Status code 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"})",
+									"",
+									"pm.test(\"Response has correct structure\", function () {",
+									"    pm.expect(responseJson).to.have.property(\"id\");",
+									"    pm.expect(responseJson).to.have.property(\"name\");",
+									"    pm.expect(responseJson).to.have.property(\"email\");",
+									"    pm.expect(responseJson).to.have.property(\"gender\");",
+									"    pm.expect(responseJson).to.have.property(\"status\");",
+									"});",
+									"",
+									"pm.test(\"Test data type of the response\", function () {",
+									"    pm.expect(responseJson).to.be.an(\"object\");",
+									"    pm.expect(responseJson.id).to.be.a(\"number\");",
+									"    pm.expect(responseJson.name).to.be.a(\"string\");",
+									"    pm.expect(responseJson.email).to.be.a(\"string\")",
+									"    pm.expect(responseJson.gender).to.be.a(\"string\");",
+									"    pm.expect(responseJson.status).to.be.a(\"string\");",
+									"});",
+									"",
+									"pm.test(\"Response has correct values\", function () {",
+									"    pm.expect(responseJson.name).to.eql(pm.environment.get(\"name\"));",
+									"    pm.expect(responseJson.email).to.eql(pm.environment.get(\"email\"));",
+									"    pm.expect(responseJson.gender).to.eql(pm.environment.get(\"gender\"));",
+									"    pm.expect(responseJson.status).to.eql(pm.environment.get(\"status\"));",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 2000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"",
+									"pm.execution.setNextRequest(\"Create user with empty body\");"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer ea96b27570c0fefe900b5639a947208e3a5ba8b3c509b8d799f8517ab5b67560",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"{{name}}\",\n    \"gender\": \"{{gender}}\",\n    \"email\": \"{{email}}\",\n    \"status\": \"{{status}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "Generated from cURL: curl -i -H \"Accept:application/json\" -H \"Content-Type:application/json\" -H \"Authorization: Bearer ea96b27570c0fefe900b5639a947208e3a5ba8b3c509b8d799f8517ab5b67560\" -XPOST \"https://gorest.co.in/public/v2/users\" -d '{\"name\":\"Tenali Ramakrishna\", \"gender\":\"male\", \"email\":\"tenali.ramakrishna@15ce.com\", \"status\":\"active\"}' "
+					},
+					"response": []
+				},
+				{
+					"name": "Create user with empty body",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {",
+									"    pm.response.to.have.status(422);",
+									"});",
+									"",
+									"pm.test(\"Status code name has a string\", function () {",
+									"    pm.response.to.have.status(\"Unprocessable Entity\");",
+									"});",
+									"",
+									"pm.test(\"Response should be an array\", function () {",
+									"    pm.expect(pm.response.json()).to.be.an(\"array\");",
+									"});",
+									"",
+									"pm.test(\"Response contains error fields\", function () {",
+									"    const expectedErrorFields = [\"email\", \"name\", \"gender\", \"status\"];",
+									"",
+									"    var errorList = pm.response.json();",
+									"    ",
+									"    for(const error of errorList) {",
+									"        pm.expect(error.field).to.be.oneOf(expectedErrorFields);",
+									"    }",
+									"}); ",
+									"",
+									"pm.execution.setNextRequest(\"Create user with invalid email\");"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create user with invalid email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {",
+									"    pm.response.to.have.status(422);",
+									"});",
+									"",
+									"pm.test(\"Status code name has a string\", function () {",
+									"    pm.response.to.have.status(\"Unprocessable Entity\");",
+									"});",
+									"",
+									"pm.test(\"Response should be an array\", function () {",
+									"    pm.expect(pm.response.json()).to.be.an(\"array\");",
+									"});",
+									"",
+									"pm.test(\"Response contains an object with field email\", function () {",
+									"    pm.expect(pm.response.json()[0].field).to.eql(\"email\");",
+									"}); ",
+									"",
+									"pm.execution.setNextRequest(\"List users\");"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Test\",\n    \"gender\": \"male\",\n    \"email\": \"invalidEmail\",\n    \"status\": \"active\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseJson = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"The response is an array\", function () {",
+									"    pm.expect(responseJson).to.be.an(\"array\");",
+									"});",
+									"",
+									"pm.test(\"The array contains at least one user\", function () {",
+									"    pm.expect(responseJson).to.have.length.at.least(1);",
+									"});",
+									"",
+									"pm.test(\"Check if the user has the correct properties\", function () {",
+									"    const index = Math.floor(Math.random() * responseJson.length);",
+									"    const user = responseJson[index];",
+									"",
+									"    pm.expect(user).to.have.property(\"id\");",
+									"    pm.expect(user).to.have.property(\"name\");",
+									"    pm.expect(user).to.have.property(\"email\");",
+									"    pm.expect(user).to.have.property(\"gender\");",
+									"    pm.expect(user).to.have.property(\"status\");",
+									"});",
+									"",
+									"pm.test(\"Check if the user has a correct status\", function () {",
+									"    const index = Math.floor(Math.random() * responseJson.length);",
+									"    const user = responseJson[index];",
+									"",
+									"    pm.expect(user.status).to.be.oneOf([\"active\", \"inactive\"]);",
+									"});",
+									"",
+									"pm.test(\"Check if the user has a valid gender\", function () {",
+									"    const index = Math.floor(Math.random() * responseJson.length);",
+									"    const user = responseJson[index];",
+									"",
+									"    pm.expect(user.gender).to.be.oneOf([\"female\", \"male\"]);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 3000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(3000);",
+									"});",
+									"",
+									"pm.execution.setNextRequest(\"Get user details\");"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer ea96b27570c0fefe900b5639a947208e3a5ba8b3c509b8d799f8517ab5b67560",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "Generated from cURL: curl -i -H \"Accept:application/json\" -H \"Content-Type:application/json\" -H \"Authorization: Bearer ea96b27570c0fefe900b5639a947208e3a5ba8b3c509b8d799f8517ab5b67560\" -XGET \"https://gorest.co.in/public/v2/users\""
+					},
+					"response": []
+				},
+				{
+					"name": "Get user details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseJson = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an object\", function () {",
+									"    pm.expect(responseJson).to.be.an(\"object\");",
+									"});",
+									"",
+									"pm.test(\"Response has correct structure\", function () {",
+									"    const user = responseJson;",
+									"",
+									"    pm.expect(user).to.have.property(\"id\");",
+									"    pm.expect(user).to.have.property(\"name\");",
+									"    pm.expect(user).to.have.property(\"email\");",
+									"    pm.expect(user).to.have.property(\"gender\");",
+									"    pm.expect(user).to.have.property(\"status\");",
+									"});",
+									"",
+									"pm.test(\"Response data is correct\", function () {",
+									"    pm.expect(responseJson.id).to.eql(pm.environment.get(\"id\"));",
+									"    pm.expect(responseJson.name).to.eql(pm.environment.get(\"name\"));",
+									"    pm.expect(responseJson.email).to.eql(pm.environment.get(\"email\"));",
+									"    pm.expect(responseJson.gender).to.eql(pm.environment.get(\"gender\"));",
+									"    pm.expect(responseJson.status).to.eql(pm.environment.get(\"status\"));",
+									"});",
+									"",
+									"pm.test(\"Content-type header is present\", function () {",
+									"    pm.response.to.have.header(\"Content-type\");",
+									"});",
+									"",
+									"pm.test(\"Content-type header is application/json\", function () {",
+									"    pm.expect(pm.response.headers.get(\"Content-type\")).to.include(\"application/json\");",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 1000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});",
+									"",
+									"pm.execution.setNextRequest(\"Update user\");",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/{{id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseJson = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an object\", function () {",
+									"    pm.expect(responseJson).to.be.an(\"object\"); ",
+									"});",
+									"",
+									"pm.test(\"Response structure is Ok\", function () {",
+									"    pm.expect(responseJson).to.have.property(\"id\");",
+									"    pm.expect(responseJson).to.have.property(\"name\");",
+									"    pm.expect(responseJson).to.have.property(\"email\");",
+									"    pm.expect(responseJson).to.have.property(\"gender\");",
+									"    pm.expect(responseJson).to.have.property(\"status\");",
+									"});",
+									"",
+									"pm.test(\"Response data type is correct\", function () {",
+									"    pm.expect(responseJson.id).to.be.a(\"number\");",
+									"    pm.expect(responseJson.name).to.be.a(\"string\");",
+									"    pm.expect(responseJson.email).to.be.a(\"string\");",
+									"    pm.expect(responseJson.gender).to.be.a(\"string\");",
+									"    pm.expect(responseJson.status).to.be.a(\"string\");",
+									"});",
+									"",
+									"pm.test(\"Response data is correct\", function () {",
+									"    pm.expect(responseJson.id).to.eql(pm.environment.get(\"id\"));",
+									"    pm.expect(responseJson.name).to.eql(pm.environment.get(\"name\"));",
+									"    pm.expect(responseJson.email).to.eql(pm.environment.get(\"email\"));",
+									"    pm.expect(responseJson.gender).to.eql(pm.environment.get(\"gender\"));",
+									"    pm.expect(responseJson.status).to.eql(pm.environment.get(\"status\"));",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 3000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(3000);",
+									"});",
+									"",
+									"pm.execution.setNextRequest(\"Update invalid user\");",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const statusList = [\"active\", \"inactive\"]",
+									"",
+									"const name = pm.environment.get(\"name\");",
+									"const email = pm.environment.get(\"email\");",
+									"const status = pm.environment.get(\"status\");",
+									"",
+									"const indexStatusList = Math.floor(Math.random() * statusList.length);",
+									"",
+									"const newName = pm.variables.replaceIn(name + \"{{$randomAlphaNumeric}}\");",
+									"const newEmail = pm.variables.replaceIn(\"{{$randomAlphaNumeric}}\" + email);",
+									"const newStatus = statusList[indexStatusList];",
+									"",
+									"pm.environment.set(\"name\", newName);",
+									"pm.environment.set(\"email\", newEmail);",
+									"pm.environment.set(\"status\", newStatus);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer ea96b27570c0fefe900b5639a947208e3a5ba8b3c509b8d799f8517ab5b67560",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"{{name}}\",\n    \"email\": \"{{email}}\",\n    \"status\": \"{{status}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/{{id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{id}}"
+							]
+						},
+						"description": "Generated from cURL: curl -i -H \"Accept:application/json\" -H \"Content-Type:application/json\" -H \"Authorization: Bearer ea96b27570c0fefe900b5639a947208e3a5ba8b3c509b8d799f8517ab5b67560\" -XPATCH \"https://gorest.co.in/public/v2/users/7440272\" -d '{\"name\":\"Allasani Peddana\", \"email\":\"allasani.peddana@15ce.com\", \"status\":\"active\"}' "
+					},
+					"response": []
+				},
+				{
+					"name": "Update invalid user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Response contains message \\\"Resource not found \\\"\", function () {",
+									"    pm.expect(pm.response.text().toLowerCase()).to.include(\"resource not found\");",
+									"});",
+									"",
+									"pm.execution.setNextRequest(\"Create post\");"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/-1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"-1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Response body is empty\", function () {",
+									"    pm.expect(pm.response.text()).to.be.empty;",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 3000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(3000);",
+									"});",
+									"",
+									"pm.execution.setNextRequest(null);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer ea96b27570c0fefe900b5639a947208e3a5ba8b3c509b8d799f8517ab5b67560"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users/{{id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{id}}"
+							]
+						},
+						"description": "Generated from cURL: curl -i -H \"Accept:application/json\" -H \"Content-Type:application/json\" -H \"Authorization: Bearer ea96b27570c0fefe900b5639a947208e3a5ba8b3c509b8d799f8517ab5b67560\" -XDELETE \"https://gorest.co.in/public/v2/users/7440272\""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Posts",
+			"item": [
+				{
+					"name": "Create post",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const title = pm.variables.replaceIn(\"{{$randomLoremWords}}\");",
+									"const body = pm.variables.replaceIn(\"{{$randomLoremSentences}}\");",
+									"",
+									"pm.environment.set(\"postTitle\", title);",
+									"pm.environment.set(\"postBody\", body);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Status code name has string\", function () {",
+									"    pm.response.to.have.status(\"Created\");",
+									"});",
+									"",
+									"pm.test(\"Response is not empty\", function () {",
+									"    var responseJson = pm.response.json();",
+									"    pm.expect(Object.keys(responseJson).length).is.greaterThan(0);",
+									"});",
+									"",
+									"pm.test(\"Post has correct structure\", function () {",
+									"    var responseJson = pm.response.json();",
+									"",
+									"    pm.expect(responseJson).to.have.property(\"id\");",
+									"    pm.expect(responseJson).to.have.property(\"user_id\");",
+									"    pm.expect(responseJson).to.have.property(\"title\");",
+									"    pm.expect(responseJson).to.have.property(\"body\");",
+									"});",
+									"",
+									"pm.test(\"Post information is correct\", function () {",
+									"    var responseJson = pm.response.json();",
+									"",
+									"    pm.expect(responseJson.user_id).to.eql(pm.environment.get(\"id\"));",
+									"    pm.expect(responseJson.title).to.eql(pm.environment.get(\"postTitle\"));",
+									"    pm.expect(responseJson.body).to.eql(pm.environment.get(\"postBody\"));",
+									"});",
+									"",
+									"pm.environment.set(\"postId\", pm.response.json().id);",
+									"",
+									"pm.execution.setNextRequest(\"Create a post with an invalid user\");"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user\": {\n        \"id\": {{id}},\n        \"name\": \"{{name}}\",\n        \"email\": \"{{email}}\",\n        \"gender\": \"{{gender}}\",\n        \"status\": \"{{status}}\"\n    },\n    \"title\": \"{{postTitle}}\",\n    \"body\": \"{{postBody}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/{{id}}/posts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{id}}",
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a post with an invalid user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {",
+									"    pm.response.to.have.status(422);",
+									"});",
+									"",
+									"pm.test(\"Response body contains message: \\\"must exist\\\"\", function () {",
+									"    pm.expect(pm.response.text().toLowerCase()).to.include(\"must exist\");",
+									"});",
+									"",
+									"pm.test(\"Error response has a user field\", function () {",
+									"    pm.expect(pm.response.json()[0]).to.have.any.keys(\"field\")",
+									"});",
+									"",
+									"pm.execution.setNextRequest(\"List posts\");"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user\": {\n        \"id\": {{id}},\n        \"name\": \"{{name}}\",\n        \"email\": \"{{email}}\",\n        \"gender\": \"{{gender}}\",\n        \"status\": \"{{status}}\"\n    },\n    \"title\": \"{{postTitle}}\",\n    \"body\": \"{{postBody}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/-1/posts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"-1",
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List posts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseJson = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    pm.expect(responseJson).to.be.an(\"array\");",
+									"});",
+									"",
+									"pm.test(\"Response elements are objects\", function () {",
+									"    var posts = responseJson;",
+									"",
+									"    for(const post of posts) {",
+									"        pm.expect(post).to.be.an(\"object\");",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Response elements have correct structure\", function () {",
+									"    var posts = responseJson;",
+									"",
+									"    for(const post of posts) {",
+									"        pm.expect(post).to.have.property(\"id\");",
+									"        pm.expect(post).to.have.property(\"user_id\");",
+									"        pm.expect(post).to.have.property(\"title\");",
+									"        pm.expect(post).to.have.property(\"body\");",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Response has correct data types\", function () {",
+									"    var posts = responseJson;",
+									"",
+									"    for(const post of posts) {",
+									"        pm.expect(post.id).to.be.a(\"number\");",
+									"        pm.expect(post.user_id).to.be.a(\"number\");",
+									"        pm.expect(post.title).to.be.a(\"string\");",
+									"        pm.expect(post.body).to.be.a(\"string\");",
+									"    }",
+									"});",
+									"",
+									"pm.execution.setNextRequest(\"Update post\");",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/posts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update post",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const title = pm.variables.replaceIn(\"{{$randomLoremWords}}\");",
+									"const body = pm.variables.replaceIn(\"{{$randomLoremSentences}}\");",
+									"",
+									"pm.environment.set(\"postTitle\", title);",
+									"pm.environment.set(\"postBody\", body);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Post has correct structure\", function () {",
+									"    var responseJson = pm.response.json();",
+									"",
+									"    pm.expect(responseJson).to.have.property(\"id\");",
+									"    pm.expect(responseJson).to.have.property(\"user_id\");",
+									"    pm.expect(responseJson).to.have.property(\"title\");",
+									"    pm.expect(responseJson).to.have.property(\"body\");",
+									"});",
+									"",
+									"pm.test(\"Post information is correct\", function () {",
+									"    var responseJson = pm.response.json();",
+									"",
+									"    pm.expect(responseJson.user_id).to.eql(pm.environment.get(\"id\"));",
+									"    pm.expect(responseJson.title).to.eql(pm.environment.get(\"postTitle\"));",
+									"    pm.expect(responseJson.body).to.eql(pm.environment.get(\"postBody\"));",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 2000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"",
+									"pm.execution.setNextRequest(\"Update post with empty body\");"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"{{postTitle}}\",\n    \"body\": \"{{postBody}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/posts/{{postId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"posts",
+								"{{postId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update post with empty body",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {",
+									"    pm.response.to.have.status(422);",
+									"});",
+									"",
+									"pm.test(\"Status message is \\\"can't be blank\\\"\", function () {",
+									"    pm.expect(pm.response.text().toLowerCase()).to.include(\"can't be blank\");",
+									"});",
+									"",
+									"pm.test(\"Response body has a field \\\"body\\\"\", function () {",
+									"    pm.expect(pm.response.json()[0].field).to.eql(\"body\");",
+									"});",
+									"",
+									"pm.execution.setNextRequest(\"Create comment\");"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Empty body\",\n    \"body\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/posts/{{postId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"posts",
+								"{{postId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Response body is empty\", function () {",
+									"    pm.expect(pm.response.text()).to.be.empty;",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 3000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(3000);",
+									"});",
+									"",
+									"pm.execution.setNextRequest(\"Delete user\");"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/posts/{{postId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"posts",
+								"{{postId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Comments",
+			"item": [
+				{
+					"name": "Create comment",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const commentBody = pm.variables.replaceIn(\"{{$randomLoremSentences}}\");",
+									"",
+									"pm.environment.set(\"commentBody\", commentBody);",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response is not empty\", function () {",
+									"    var responseJson = pm.response.json();",
+									"    pm.expect(Object.keys(responseJson).length).is.greaterThan(0);",
+									"});",
+									"",
+									"pm.test(\"Comment has correct structure\", function () {",
+									"    var responseJson = pm.response.json();",
+									"",
+									"    pm.expect(responseJson).to.have.property(\"id\");",
+									"    pm.expect(responseJson).to.have.property(\"post_id\");",
+									"    pm.expect(responseJson).to.have.property(\"name\");",
+									"    pm.expect(responseJson).to.have.property(\"email\");",
+									"    pm.expect(responseJson).to.have.property(\"body\");",
+									"});",
+									"",
+									"pm.test(\"Comment has correct data types\", function () {",
+									"    var responseJson = pm.response.json();",
+									"",
+									"    pm.expect(responseJson.id).to.be.a(\"number\");",
+									"    pm.expect(responseJson.post_id).to.be.a(\"number\");",
+									"    pm.expect(responseJson.name).to.be.a(\"string\");",
+									"    pm.expect(responseJson.email).to.be.a(\"string\");",
+									"    pm.expect(responseJson.body).to.be.a(\"string\");",
+									"})",
+									"",
+									"pm.test(\"Comment information is correct\", function () {",
+									"    var responseJson = pm.response.json();",
+									"",
+									"    pm.expect(responseJson.post_id).to.eql(pm.environment.get(\"postId\"));",
+									"    pm.expect(responseJson.name).to.eql(pm.environment.get(\"name\"));",
+									"    pm.expect(responseJson.email).to.eql(pm.environment.get(\"email\"));",
+									"    pm.expect(responseJson.body).to.eql(pm.environment.get(\"commentBody\"));",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 2000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"",
+									"pm.environment.set(\"commentId\", pm.response.json().id);",
+									"",
+									"pm.execution.setNextRequest(\"Create comment with empty name\");"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"{{name}}\",\n    \"email\": \"{{email}}\",\n    \"body\": \"{{commentBody}}\"\n}\n\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/posts/{{postId}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"posts",
+								"{{postId}}",
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create comment with empty name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {",
+									"    pm.response.to.have.status(422);",
+									"});",
+									"",
+									"pm.test(\"Response error has correct information\", function () {",
+									"    const errorList = pm.response.json();",
+									"    let existFieldName = false;",
+									"    ",
+									"    for(const error of errorList) {",
+									"        if(error.field == \"name\") {",
+									"            existFieldName = true;",
+									"            pm.expect(error.message).to.eql(\"can't be blank\");",
+									"        }",
+									"    }",
+									"",
+									"    pm.expect(existFieldName).to.be.true;",
+									"});",
+									"",
+									"pm.execution.setNextRequest(\"List comments\");"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"\",\n    \"email\": \"{{email}}\",\n    \"body\": \"{{commentBody}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/posts/{{postId}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"posts",
+								"{{postId}}",
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List comments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    pm.expect(pm.response.json()).to.be.an(\"array\");",
+									"});",
+									"",
+									"pm.test(\"Items are objects\", function () {",
+									"    const comments = pm.response.json();",
+									"",
+									"    for(const comment of comments) {",
+									"        pm.expect(comment).to.be.an(\"object\");",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Items have all the expected keys\", function () {",
+									"    const comments = pm.response.json();",
+									"",
+									"    for(const comment of comments) {",
+									"        pm.expect(comment).to.have.all.keys(\"id\", \"post_id\", \"name\", \"email\", \"body\");",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Items have the correct data types\", function () {",
+									"    const comments = pm.response.json();",
+									"",
+									"    for(const comment of comments) {",
+									"        pm.expect(comment.id).to.be.a(\"number\");",
+									"        pm.expect(comment.post_id).to.be.a(\"number\");",
+									"        pm.expect(comment.name).to.be.a(\"string\");",
+									"        pm.expect(comment.email).to.be.a(\"string\");",
+									"        pm.expect(comment.body).to.be.a(\"string\");",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Items have a unique id\", function () {",
+									"    const comments = pm.response.json();",
+									"    const set = new Set();",
+									"",
+									"    for(const comment of comments) {",
+									"        pm.expect(set.has(comment.id)).to.be.false;",
+									"        set.add(comment.id);",
+									"    }",
+									"});",
+									"",
+									"pm.execution.setNextRequest(\"Update Comment\");"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Comment",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const body = pm.variables.replaceIn(\"{{$randomLoremSentences}}\");",
+									"",
+									"pm.environment.set(\"commentBody\", body);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Comment body is a string\", function () {",
+									"    pm.expect(pm.response.json().body).to.be.a(\"string\");",
+									"})",
+									"",
+									"pm.test(\"Comment body is correctly patched\", function () {",
+									"   pm.expect(pm.response.json().body).to.eql(pm.environment.get(\"commentBody\")); ",
+									"});",
+									"",
+									"pm.test(\"Status code name has string\", function () {",
+									"    pm.response.to.have.status(\"OK\");",
+									"});",
+									"",
+									"pm.execution.setNextRequest(\"Update comment with empty body\");"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"body\": \"{{commentBody}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comments/{{commentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments",
+								"{{commentId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update comment with empty body",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Comment information is correct\", function () {",
+									"    var responseJson = pm.response.json();",
+									"",
+									"    pm.expect(responseJson.post_id).to.eql(pm.environment.get(\"postId\"));",
+									"    pm.expect(responseJson.name).to.eql(pm.environment.get(\"name\"));",
+									"    pm.expect(responseJson.email).to.eql(pm.environment.get(\"email\"));",
+									"    pm.expect(responseJson.body).to.eql(pm.environment.get(\"commentBody\"));",
+									"});",
+									"",
+									"pm.execution.setNextRequest(\"Create todo\");"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/comments/{{commentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments",
+								"{{commentId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Response body is empty\", function () {",
+									"    pm.expect(pm.response.text()).to.be.empty;",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 3000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(3000);",
+									"});",
+									"",
+									"pm.execution.setNextRequest(\"Delete post\");"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/comments/{{commentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comments",
+								"{{commentId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Todos",
+			"item": [
+				{
+					"name": "Create todo",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const title = pm.variables.replaceIn(\"{{$randomLoremWords}}\");",
+									"const statusList = [\"pending\", \"completed\"];",
+									"const date = pm.variables.replaceIn(\"{{$randomDateFuture}}\")",
+									"",
+									"const indexStatusList = Math.floor(Math.random() * statusList.length);",
+									"",
+									"pm.environment.set(\"todoTitle\", title);",
+									"pm.environment.set(\"todoStatus\", statusList[indexStatusList]);",
+									"pm.environment.set(\"todoDueOn\", date);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);",
+									"});",
+									"",
+									"pm.test(\"Response body contains correct keys\", function () {",
+									"    const responseJson = pm.response.json();",
+									"",
+									"    pm.expect(responseJson).to.have.property(\"id\");",
+									"    pm.expect(responseJson).to.have.property(\"user_id\");",
+									"    pm.expect(responseJson).to.have.property(\"title\");",
+									"    pm.expect(responseJson).to.have.property(\"due_on\");",
+									"    pm.expect(responseJson).to.have.property(\"status\");",
+									"});",
+									"",
+									"pm.test(\"Response body has correct data types\", function () {",
+									"   const responseJson = pm.response.json();",
+									"",
+									"   pm.expect(responseJson.user_id).to.be.a(\"number\"); ",
+									"   pm.expect(responseJson.title).to.be.a(\"string\"); ",
+									"   pm.expect(responseJson.due_on).to.be.a(\"string\"); ",
+									"   pm.expect(responseJson.status).to.be.a(\"string\"); ",
+									"});",
+									"",
+									"",
+									"pm.test(\"Response body has correct data\", function () {",
+									"    const responseJson = pm.response.json();",
+									"",
+									"    pm.expect(responseJson.user_id).to.eql(pm.environment.get(\"id\")); ",
+									"    pm.expect(responseJson.title).to.eql(pm.environment.get(\"todoTitle\")); ",
+									"    pm.expect(responseJson.status).to.eql(pm.environment.get(\"todoStatus\"));",
+									"});",
+									"",
+									"pm.environment.set(\"todoId\", pm.response.json().id);",
+									" ",
+									"pm.execution.setNextRequest('Create todo with no \"due_on\" field');"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \n    \"title\": \"{{todoTitle}}\",\n    \"status\": \"{{todoStatus}}\",\n    \"due_on\": \"{{todoDueOn}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/{{id}}/todos",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{id}}",
+								"todos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create todo with no \"due_on\" field",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);",
+									"});",
+									"",
+									"pm.test(\"The \\\"due_on\\\" property is null\", function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.due_on).to.be.null;",
+									"});",
+									"",
+									"pm.execution.setNextRequest(\"List todos\");"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \n    \"title\": \"Title with no due_on\",\n    \"status\": \"completed\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/{{id}}/todos",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{id}}",
+								"todos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List todos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    pm.expect(pm.response.json()).to.be.an(\"array\");",
+									"});",
+									"",
+									"pm.test(\"Response elements are objects\", function () {",
+									"    var todos = pm.response.json();",
+									"",
+									"    for(const todo of todos) {",
+									"        pm.expect(todo).to.be.an(\"object\");",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Response elements have correct structure\", function () {",
+									"    var todos = pm.response.json();",
+									"",
+									"    for(const todo of todos) {",
+									"        pm.expect(todo).to.have.property(\"id\");",
+									"        pm.expect(todo).to.have.property(\"user_id\");",
+									"        pm.expect(todo).to.have.property(\"title\");",
+									"        pm.expect(todo).to.have.property(\"due_on\");",
+									"        pm.expect(todo).to.have.property(\"status\");",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Response has correct data types\", function () {",
+									"    var todos = pm.response.json();",
+									"",
+									"    for(const todo of todos) {",
+									"        pm.expect(todo.id).to.be.a(\"number\");",
+									"        pm.expect(todo.user_id).to.be.a(\"number\");",
+									"        pm.expect(todo.title).to.be.a(\"string\");",
+									"        pm.expect(todo.status).to.be.a(\"string\");",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Response has valid statuses\", function () {",
+									"    var todos = pm.response.json();",
+									"",
+									"    for(const todo of todos) {",
+									"        pm.expect(todo.status).to.be.oneOf([\"completed\", \"pending\"]);",
+									"    }",
+									"});",
+									"",
+									"pm.execution.setNextRequest(\"Update todo\");"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/todos",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"todos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update todo",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const title = pm.variables.replaceIn(\"{{$randomLoremWords}}\");",
+									"const statusList = [\"completed\", \"pending\"];",
+									"",
+									"const indexStatusList = Math.floor(Math.random() * statusList.length);",
+									"",
+									"pm.environment.set(\"todoTitle\", title);",
+									"pm.environment.set(\"todoStatus\", statusList[indexStatusList]);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const statusList = [\"completed\", \"pending\"];",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response body has correct title and status\", function () {",
+									"    var responseJson = pm.response.json();",
+									"",
+									"    pm.expect(responseJson.title).to.eql(pm.environment.get(\"todoTitle\"));",
+									"    pm.expect(responseJson.status).to.eql(pm.environment.get(\"todoStatus\"));",
+									"});",
+									"",
+									"pm.test(\"Valid status\", function () {",
+									"    var responseJson = pm.response.json();",
+									"    pm.expect(responseJson.status).to.be.oneOf(statusList);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 2000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"",
+									"pm.execution.setNextRequest(\"Update todo with invalid status\");"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"{{todoTitle}}\",\n    \"status\": \"{{todoStatus}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/todos/{{todoId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"todos",
+								"{{todoId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update todo with invalid status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {",
+									"    pm.response.to.have.status(422);",
+									"});",
+									"",
+									"pm.test(\"Response error has correct information\", function () {",
+									"    const errorList = pm.response.json();",
+									"    let existFieldStatus = false;",
+									"    ",
+									"    for(const error of errorList) {",
+									"        if(error.field == \"status\") {",
+									"            existFieldStatus = true;",
+									"            pm.expect(error.message).to.eql(\"can't be blank, can be pending or completed\");",
+									"        }",
+									"    }",
+									"",
+									"    pm.expect(existFieldStatus).to.be.true;",
+									"});",
+									"",
+									"pm.execution.setNextRequest(\"Delete todo\");"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Todo with no valid status\",\n    \"status\": \"noValid\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/todos/{{todoId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"todos",
+								"{{todoId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete todo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Response body is empty\", function () {",
+									"    pm.expect(pm.response.text()).to.be.empty;",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 3000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(3000);",
+									"});",
+									"",
+									"pm.execution.setNextRequest(\"Delete a non-existent task\");"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/todos/{{todoId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"todos",
+								"{{todoId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a non-existent task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Response body has a message key\", function () {",
+									"    pm.response.to.have.jsonBody(\"message\");",
+									"});",
+									"",
+									"pm.test(\"Response body message is \\\"Resource not found\\\"\", function () {",
+									"    pm.expect(pm.response.text().toLowerCase()).to.include(\"resource not found\");",
+									"});",
+									"",
+									"pm.execution.setNextRequest(\"Delete comment\");"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/todos/-1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"todos",
+								"-1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{BearerToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
