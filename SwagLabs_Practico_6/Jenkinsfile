@@ -21,13 +21,7 @@ pipeline {
             }
         }
 
-        stage('Checkout') {
-            steps {
-                echo 'Clonando el repositorio WDIO...'
-                // ¡IMPORTANTE! Reemplaza TU_URL_DEL_REPOSITORIO
-                git branch: 'main', url: 'TU_URL_DEL_REPOSITORIO_WDIO' 
-            }
-        }
+
 
         stage('Instalar dependencias') {
             steps {
