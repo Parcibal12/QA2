@@ -12,8 +12,9 @@ pipeline {
         BROWSERSTACK_USERNAME = credentials('browserstack-username')
         BROWSERSTACK_ACCESS_KEY = credentials('browserstack-access-key')
         
-        // ID de la App en BrowserStack (¡Perfecto!)
-        APP_PATH='bs://c162f76b1193ac30a7781f9c254fe685f135a227'
+
+        APPIUM_APP_PACKAGE = 'com.google.android.deskclock'
+        APPIUM_APP_ACTIVITY = 'com.android.deskclock.DeskClock'
 
         // Las variables de Allure apuntan a la raíz (¡Correcto!)
         ALLURE_RESULTS = "${env.WORKSPACE}/allure-results"
