@@ -2,23 +2,26 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'Node18' 
+        nodejs 'Node18' // Asegúrate que este nombre es correcto
     }
 
     environment {
+        // CORRECCIÓN: Añadir la variable de entorno aquí
+        SWAG_LABS_URL = 'https://www.saucedemo.com' // <-- Añade esta línea
+
+        // Variables de Allure (ajustadas para la subcarpeta)
         ALLURE_RESULTS = "${env.WORKSPACE}/SwagLabs_Practico_6/allure-results"
         ALLURE_REPORT  = "${env.WORKSPACE}/SwagLabs_Practico_6/allure-report"
     }
 
     stages {
-
+        // (La etapa 'Preparar Workspace' está eliminada, ¡correcto!)
 
         stage('Instalar dependencias') {
             steps {
-                // Entramos a la carpeta del proyecto
                 dir('SwagLabs_Practico_6') {
                     echo 'Instalando dependencias de Node.js...'
-                    bat 'npm install' 
+                    bat 'npm install'
                 }
             }
         }
@@ -27,7 +30,8 @@ pipeline {
             steps {
                 dir('SwagLabs_Practico_6') {
                     echo "Ejecutando pruebas WDIO..."
-                    bat "npx wdio run wdio.conf.js" 
+                    // WDIO usará la variable SWAG_LABS_URL definida arriba
+                    bat "npx wdio run wdio.conf.js"
                 }
             }
         }
@@ -49,7 +53,7 @@ pipeline {
                 allure([
                     includeProperties: false,
                     jdk: '',
-                    results: [[path: 'SwagLabs_Practico_6/allure-results']], 
+                    results: [[path: 'SwagLabs_Practico_6/allure-results']],
                     reportBuildPolicy: 'ALWAYS'
                 ])
             }
@@ -59,7 +63,7 @@ pipeline {
     post {
         always {
             echo 'Pipeline finalizada'
-            cleanWs() 
+            cleanWs()
         }
         success {
             echo 'Pruebas WDIO ejecutadas con éxito.'
