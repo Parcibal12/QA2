@@ -1,0 +1,81 @@
+pipeline {
+    agent any
+
+    tools {
+        // Asegúrate de que este nombre coincida con tu configuración de Node.js en Jenkins
+        nodejs 'Node18' 
+    }
+
+    environment {
+        // Carpetas absolutas para resultados y reportes de Allure
+        ALLURE_RESULTS = "${env.WORKSPACE}/allure-results"
+        ALLURE_REPORT  = "${env.WORKSPACE}/allure-report"
+    }
+
+    stages {
+        stage('Preparar Workspace') {
+            steps {
+                echo "Limpiando workspace..."
+                // Limpia todo para evitar archivos viejos
+                deleteDir() 
+            }
+        }
+
+        stage('Checkout') {
+            steps {
+                echo 'Clonando el repositorio WDIO...'
+                // ¡IMPORTANTE! Reemplaza TU_URL_DEL_REPOSITORIO
+                git branch: 'main', url: 'TU_URL_DEL_REPOSITORIO_WDIO' 
+            }
+        }
+
+        stage('Instalar dependencias') {
+            steps {
+                echo 'Instalando dependencias de Node.js...'
+                // Instala todos los paquetes del package.json
+                bat 'npm install' 
+            }
+        }
+
+        stage('Ejecutar WDIO') {
+            steps {
+                echo "Ejecutando pruebas WDIO..."
+                // Ejecuta los tests usando el script 'wdio'
+                bat "npx wdio run wdio.conf.js" 
+            }
+        }
+
+        stage('Generar reporte Allure') {
+            steps {
+                echo "Generando reporte Allure..."
+                // Comando para compilar los archivos JSON brutos en un reporte HTML
+                // Requiere que Allure CLI esté disponible
+                bat """
+                npx allure generate %ALLURE_RESULTS% --clean -o %ALLURE_REPORT%
+                """
+            }
+        }
+
+        stage('Publicar reporte Allure en Jenkins') {
+            steps {
+                echo "Publicando reporte Allure usando el plugin..."
+                // Este plugin busca los resultados brutos y los expone en Jenkins.
+                allure([
+                    includeProperties: false,
+                    jdk: '',
+                    results: [[path: 'allure-results']], // Ruta a los resultados brutos
+                    reportBuildPolicy: 'ALWAYS'
+                ])
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline finalizada'
+        }
+        success {
+            echo 'Pruebas WDIO ejecutadas con éxito.'
+        }
+    }
+}

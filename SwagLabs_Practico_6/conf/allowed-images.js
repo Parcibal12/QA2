@@ -1,0 +1,8 @@
+export const allowedImages = [
+    '/static/media/sauce-backpack-1200x1500.0a0b85a3.jpg',
+    '/static/media/bike-light-1200x1500.37c843b0.jpg',
+    '/static/media/bolt-shirt-1200x1500.c2599ac5.jpg',
+    '/static/media/sauce-pullover-1200x1500.51d7ffaf.jpg',
+    '/static/media/red-onesie-1200x1500.2ec615b2.jpg',
+    '/static/media/red-tatt-1200x1500.30dadef4.jpg'
+];
