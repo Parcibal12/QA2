@@ -56,9 +56,9 @@ export const config = {
         {
             browserName: 'firefox'
         },
-        {
-            browserName: 'edge'
-        }
+        //{
+        //    browserName: 'edge'
+        //}
     ],
 
     //

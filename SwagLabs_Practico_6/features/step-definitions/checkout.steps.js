@@ -12,7 +12,9 @@ When('Fills the form with firstname {string}, a lastname {string} and a postal c
 });
 
 Then('The user should be redirected to the second checkout page', async function() {
-    await expect(browser).toHaveUrl(`${process.env.SWAG_LABS_URL}/checkout-step-two.html`);
+    const baseUrl = process.env.SWAG_LABS_URL.trim();
+
+    await expect(browser).toHaveUrl(`${baseUrl}/checkout-step-two.html`);
 });
 
 Then('A warning should be displayed with the message {string}', async function(message) {
