@@ -64,7 +64,8 @@ export const config = {
             appiumVersion: '2.15.0',
             appiumLogs: true
         },
-        
+        'appium:appPackage': process.env.APPIUM_APP_PACKAGE,
+        'appium:appActivity': process.env.APPIUM_APP_ACTIVITY
         
     }],
     commonCapabilities: {
@@ -123,7 +124,7 @@ export const config = {
     // commands. Instead, they hook themselves up into the test process.
     services: [['browserstack', 
     {
-        app: process.env.APP_PATH,
+        //app: process.env.APP_PATH,
         browserstacklocal: true,
         accessibility: false,
         testObservabilityOptions: {
