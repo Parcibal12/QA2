@@ -11,7 +11,9 @@ When('The user logs in with a username {string} with a password {string}', async
 });
 
 Then('The user is redirected to the inventory page', async function() {
-    await expect(browser).toHaveUrl(`${process.env.SWAG_LABS_URL}/inventory.html`);
+    const baseUrl = process.env.SWAG_LABS_URL.trim();
+
+    await expect(browser).toHaveUrl(`${baseUrl}/inventory.html`);
 });
 
 Then('The system displays the message: {string}', async function(message) {
