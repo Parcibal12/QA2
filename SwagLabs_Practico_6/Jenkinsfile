@@ -31,7 +31,7 @@ pipeline {
                 dir('SwagLabs_Practico_6') {
                     echo "Ejecutando pruebas WDIO..."
                     // WDIO usará la variable SWAG_LABS_URL definida arriba
-                    bat "npx wdio run wdio.conf.js"
+                    bat "set SWAG_LABS_URL=${env.SWAG_LABS_URL} && npx wdio run wdio.conf.js"
                 }
             }
         }
