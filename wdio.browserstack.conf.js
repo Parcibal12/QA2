@@ -122,7 +122,7 @@ export const config = {
     // commands. Instead, they hook themselves up into the test process.
     services: [['browserstack', 
     {
-        app: process.env.APP_PATH,
+        app: process.env.APP,
         browserstacklocal: true,
         accessibility: false,
         testObservabilityOptions: {
