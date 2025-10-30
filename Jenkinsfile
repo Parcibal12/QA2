@@ -7,15 +7,20 @@ pipeline {
         nodejs 'Node18' 
     }
 
-    environment {
-BROWSERSTACK_USERNAME = credentials('browserstack-username')
+environment {
+        // Carga las credenciales (¡Perfecto!)
+        BROWSERSTACK_USERNAME = credentials('browserstack-username')
         BROWSERSTACK_ACCESS_KEY = credentials('browserstack-access-key')
         
-        // ¡ESTO ES LO CORRECTO!
-        APPIUM_APP_PACKAGE = 'com.google.android.deskclock'
-        APPIUM_APP_ACTIVITY = 'com.android.deskclock.DeskClock'
+        // --- ¡PEGA TU ID AQUÍ! ---
+        // (Uso 'APP' como dice tu README.md)
+        APP = 'bs://3d4b921a39a40c6780d39587c81e15414b1474ec' 
 
-        // Las variables de Allure (¡Correcto!)
+        // Comenta o borra estas líneas. Ya no se necesitan.
+        // APPIUM_APP_PACKAGE = 'com.google.android.deskclock'
+        // APPIUM_APP_ACTIVITY = 'com.android.deskclock.DeskClock'
+        
+        // Variables de Allure (¡Correcto!)
         ALLURE_RESULTS = "${env.WORKSPACE}/allure-results"
         ALLURE_REPORT  = "${env.WORKSPACE}/allure-report"
     }
