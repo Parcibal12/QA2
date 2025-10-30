@@ -2,12 +2,13 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'Node18' // Asegúrate que este nombre es correcto
+        nodejs 'Node18'
+        allure 'AllureCLI'
     }
 
     environment {
         // CORRECCIÓN: Añadir la variable de entorno aquí
-        SWAG_LABS_URL = 'https://www.saucedemo.com' // <-- Añade esta línea
+        SWAG_LABS_URL = 'https://www.saucedemo.com'
 
         // Variables de Allure (ajustadas para la subcarpeta)
         ALLURE_RESULTS = "${env.WORKSPACE}/SwagLabs_Practico_6/allure-results"
@@ -36,16 +37,7 @@ pipeline {
             }
         }
 
-        stage('Generar reporte Allure') {
-            steps {
-                dir('SwagLabs_Practico_6') {
-                    echo "Generando reporte Allure..."
-                    bat """
-                    npx allure generate %ALLURE_RESULTS% --clean -o %ALLURE_REPORT%
-                    """
-                }
-            }
-        }
+
 
         stage('Publicar reporte Allure en Jenkins') {
             steps {
